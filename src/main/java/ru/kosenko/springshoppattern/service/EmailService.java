@@ -1,5 +1,7 @@
 package ru.kosenko.springshoppattern.service;
 
+import lombok.Builder;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+@Builder
+@Data
 @Service
 public class EmailService {
 

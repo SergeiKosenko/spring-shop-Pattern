@@ -11,6 +11,7 @@ import ru.kosenko.springshoppattern.repository.AuthorityRepository;
 import ru.kosenko.springshoppattern.repository.RegistrationTokenRepository;
 import ru.kosenko.springshoppattern.repository.UserRepository;
 
+import javax.mail.Session;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -18,12 +19,13 @@ import java.util.UUID;
 @Service
 public class RegisterService  implements UserDetailsService {
 
-    public RegisterService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, AuthorityRepository authorityRepository, RegistrationTokenRepository registrationTokenRepository, EmailService emailService) {
+    public RegisterService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, AuthorityRepository authorityRepository, RegistrationTokenRepository registrationTokenRepository, EmailService emailService, MimeMessageBuilder mimeMessageBuilder) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.authorityRepository = authorityRepository;
         this.registrationTokenRepository = registrationTokenRepository;
         this.emailService = emailService;
+        this.mimeMessageBuilder = mimeMessageBuilder;
     }
 
     @Override
@@ -36,6 +38,7 @@ public class RegisterService  implements UserDetailsService {
     private final AuthorityRepository authorityRepository;
     private final RegistrationTokenRepository registrationTokenRepository;
     private final EmailService emailService;
+    private final MimeMessageBuilder mimeMessageBuilder;
 
     // TODO Рефактор: вынести sighUp и confirmRegistration RegisterService
     @Transactional
@@ -55,6 +58,8 @@ public class RegisterService  implements UserDetailsService {
         registrationTokenRepository.save(new RegistrationToken(tokenUid, LocalDateTime.now().plusMinutes(15), user));
 
         emailService.createMailMessage(email, tokenUid);
+
+        mimeMessageBuilder.build();
 
         return tokenUid;
     }
